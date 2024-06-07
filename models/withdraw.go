@@ -7,5 +7,5 @@ import (
 type Withdraw struct {
 	gorm.Model
 	Address string
-	Amount  int
+	Amount  string
 }

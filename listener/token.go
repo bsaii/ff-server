@@ -7,7 +7,6 @@ import (
 	"github.com/bsaii/ff-server/contract"
 	"github.com/bsaii/ff-server/database"
 	"github.com/bsaii/ff-server/models"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	fiberlog "github.com/gofiber/fiber/v2/log"
 )
 
@@ -18,7 +17,7 @@ func Approval() {
 
 	ch := make(chan *contract.FFTokenApproval)
 
-	sub, err := fftoken.WatchApproval(&bind.WatchOpts{}, ch, nil, nil)
+	sub, err := fftoken.WatchApproval(nil, ch, nil, nil)
 	if err != nil {
 		log.Fatalf("Failed to subscribe to approval events: %v", err)
 	}

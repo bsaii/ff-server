@@ -35,6 +35,12 @@ func main() {
 	// Events
 	listener.Approval()
 	listener.Transfer()
+	listener.Borrowed()
+	listener.Lent()
+	listener.Repaid()
+	listener.RewardRepaid()
+	listener.Staked()
+	listener.Withdrawn()
 
 	app := fiber.New(fiber.Config{
 		AppName: "Finance Forget Server",
@@ -54,8 +60,17 @@ func main() {
 	token.Get("/approvals", handlers.Approvals)
 	token.Get("/transfers", handlers.Transfers)
 
-	// contract := app.Group("/api/contract")
-	// contract.Get("/stake/:eth_address")
+	contract := app.Group("/api/contract")
+	contract.Get("/borrowed/:account", handlers.BorrowedAmt)
+	contract.Get("/earned/:account", handlers.Earned)
+	contract.Get("/rate/interest", handlers.InterestRate)
+	contract.Get("/rate/reward", handlers.RewardRate)
+	contract.Get("/user/:account", handlers.User)
+	contract.Get("/borrowed", handlers.AllBorrowed)
+	contract.Get("/lent", handlers.AllLent)
+	contract.Get("/repaid", handlers.AllRepaid)
+	contract.Get("/staked", handlers.AllStaked)
+	contract.Get("/withdrawn", handlers.AllWithdrawn)
 
 	log.Printf("Server running on port: %v", cfg.Port)
 	app.Listen(cfg.Port)

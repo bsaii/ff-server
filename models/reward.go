@@ -7,5 +7,5 @@ import (
 type Reward struct {
 	gorm.Model
 	Address string
-	Reward  int
+	Reward  string
 }

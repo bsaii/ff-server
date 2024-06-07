@@ -7,5 +7,5 @@ import (
 type Repay struct {
 	gorm.Model
 	Address string
-	Amount  int
+	Amount  string
 }
