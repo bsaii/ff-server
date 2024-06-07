@@ -27,7 +27,6 @@ func InitDatabase(dbPath string) error {
 		&models.Reward{},
 		&models.Stake{},
 		&models.Transfer{},
-		&models.User{},
 		&models.Withdraw{},
 	)
 }

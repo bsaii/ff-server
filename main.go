@@ -6,6 +6,7 @@ import (
 	"github.com/bsaii/ff-server/config"
 	"github.com/bsaii/ff-server/contract"
 	"github.com/bsaii/ff-server/database"
+	_ "github.com/bsaii/ff-server/docs"
 	"github.com/bsaii/ff-server/handlers"
 	"github.com/bsaii/ff-server/listener"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -14,8 +15,19 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/swagger"
 )
 
+// @title Finance Forge Server
+// @version 1.0
+// @description This is a sample swagger for Fiber
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email fiber@swagger.io
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:8000
+// @BasePath /
 func main() {
 	cfg := config.LoadConfig()
 
@@ -50,6 +62,7 @@ func main() {
 	app.Use(logger.New())
 	app.Use(recover.New())
 
+	app.Get("/swagger/*", swagger.HandlerDefault)
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Finance Forge")
 	})
