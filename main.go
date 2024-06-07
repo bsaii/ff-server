@@ -4,7 +4,11 @@ import (
 	"log"
 
 	"github.com/bsaii/ff-server/config"
+	"github.com/bsaii/ff-server/contract"
 	"github.com/bsaii/ff-server/database"
+	"github.com/bsaii/ff-server/handlers"
+	"github.com/bsaii/ff-server/listener"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
@@ -22,10 +26,15 @@ func main() {
 	}
 
 	// Connect to Ethereum node
-	//   client, err := ethclient.Dial(cfg.EthNodeURL)
-	//   if err != nil {
-	// 	  log.Fatalf("Failed to connect to Ethereum node: %v", err)
-	//   }
+	ec, err := ethclient.Dial(cfg.EthNodeURL)
+	if err != nil {
+		log.Fatalf("Failed to connect to Ethereum node: %v", err)
+	}
+	contract.InitContract(ec, cfg)
+
+	// Events
+	listener.Approval()
+	listener.Transfer()
 
 	app := fiber.New(fiber.Config{
 		AppName: "Finance Forget Server",
@@ -36,8 +45,18 @@ func main() {
 	app.Use(recover.New())
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
+		return c.SendString("Finance Forge")
 	})
 
-	app.Listen(":8000")
+	token := app.Group("/api/token")
+	token.Get("/allowance", handlers.Allowance)
+	token.Get("/balance/:account", handlers.BalanceOf)
+	token.Get("/approvals", handlers.Approvals)
+	token.Get("/transfers", handlers.Transfers)
+
+	// contract := app.Group("/api/contract")
+	// contract.Get("/stake/:eth_address")
+
+	log.Printf("Server running on port: %v", cfg.Port)
+	app.Listen(cfg.Port)
 }

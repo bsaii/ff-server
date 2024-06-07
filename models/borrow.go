@@ -7,6 +7,6 @@ import (
 type Borrow struct {
 	gorm.Model
 	Address    string
-	Amount     int
-	Collateral int
+	Amount     string
+	Collateral string
 }
