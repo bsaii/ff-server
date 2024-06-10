@@ -9,6 +9,39 @@ import (
 	fiberlog "github.com/gofiber/fiber/v2/log"
 )
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type BorrowedAmountResponse struct {
+	Borrowed string `json:"borrowed"`
+}
+
+type EarnedResponse struct {
+	Earned string `json:"earned"`
+}
+
+type RateResponse struct {
+	Rate string `json:"rate"`
+}
+
+type UserResponse struct {
+	BorrowedBalance   string `json:"borrowedBalance"`
+	CollateralBalance string `json:"collateralBalance"`
+	LastUpdated       string `json:"lastUpdated"`
+	LendingBalance    string `json:"lendingBalance"`
+	Rewards           string `json:"rewards"`
+	StakingBalance    string `json:"stakingBalance"`
+}
+
+// @Summary		Retrieve borrowed amount
+// @Tags			contract
+// @Description	Retrieves the amount borrowed by an account from the blockchain
+// @Param			account	path		string			true	"Account address"
+// @Success		200		{object}	BorrowedAmountResponse	"Successful retrieval"
+// @Failure		404		{object}	ErrorResponse	"Account not found"
+// @Failure		500		{object}	ErrorResponse	"Internal server error"
+// @Router			/api/contract/borrowed/{account} [get]
 func BorrowedAmt(c *fiber.Ctx) error {
 	account := c.Params("account")
 
@@ -28,11 +61,19 @@ func BorrowedAmt(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"borrowed": value.String(),
+	return c.Status(fiber.StatusOK).JSON(BorrowedAmountResponse{
+		Borrowed: value.String(),
 	})
 }
 
+// @Summary Retrieve earned amount
+// @Tags contract
+// @Description Retrieves the amount earned by an account from the blockchain
+// @Param account path string true "Account address"
+// @Success 200 {object} EarnedResponse "Successful retrieval"
+// @Failure 404 {object} ErrorResponse "Account not found"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/earned/{account} [get]
 func Earned(c *fiber.Ctx) error {
 	account := c.Params("account")
 
@@ -52,11 +93,17 @@ func Earned(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"earned": value.String(),
+	return c.Status(fiber.StatusOK).JSON(EarnedResponse{
+		Earned: value.String(),
 	})
 }
 
+// @Summary Retrieve interest rate
+// @Tags contract
+// @Description Retrieves the general interest rate from the blockchain
+// @Success 200 {object} RateResponse "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/rate/interest [get]
 func InterestRate(c *fiber.Ctx) error {
 	ff := contract.FFInstance
 
@@ -72,6 +119,12 @@ func InterestRate(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary Retrieve reward rate
+// @Tags contract
+// @Description Retrieves the general reward rate from the blockchain
+// @Success 200 {object} RateResponse "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/rate/reward [get]
 func RewardRate(c *fiber.Ctx) error {
 	ff := contract.FFInstance
 
@@ -87,6 +140,14 @@ func RewardRate(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary Retrieve user information
+// @Tags contract
+// @Description Retrieves user information from the blockchain using the address
+// @Param account path string true "User address"
+// @Success 200 {object} UserResponse "Successful retrieval"
+// @Failure 404 {object} ErrorResponse "User not found"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/user/{account} [get]
 func User(c *fiber.Ctx) error {
 	account := c.Params("account")
 
@@ -106,16 +167,22 @@ func User(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"borrowingBalance":  user.BorrowingBalance.String(),
-		"collateralBalance": user.CollateralBalance.String(),
-		"lastUpdated":       user.LastUpdated.String(),
-		"lendingBalance":    user.LendingBalance.String(),
-		"rewards":           user.Rewards.String(),
-		"stakingBalance":    user.StakingBalance.String(),
+	return c.Status(fiber.StatusOK).JSON(UserResponse{
+		BorrowedBalance:   user.BorrowingBalance.String(),
+		CollateralBalance: user.CollateralBalance.String(),
+		LastUpdated:       user.LastUpdated.String(),
+		LendingBalance:    user.LendingBalance.String(),
+		Rewards:           user.Rewards.String(),
+		StakingBalance:    user.StakingBalance.String(),
 	})
 }
 
+// @Summary Retrieve total borrowed amount
+// @Tags contract
+// @Description Retrieves the total borrowed amount from the blockchain
+// @Success 200 {array} models.Borrow "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/borrowed [get]
 func AllBorrowed(c *fiber.Ctx) error {
 	borrows := []models.Borrow{}
 
@@ -129,6 +196,12 @@ func AllBorrowed(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(borrows)
 }
 
+// @Summary Retrieve total lent amount
+// @Tags contract
+// @Description Retrieves the total lent amount from the blockchain
+// @Success 200 {object} []models.Lent "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/lent [get]
 func AllLent(c *fiber.Ctx) error {
 	lents := []models.Lent{}
 
@@ -142,6 +215,12 @@ func AllLent(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(lents)
 }
 
+// @Summary Retrieve total repaid amount
+// @Tags contract
+// @Description Retrieves the total repaid amount from the blockchain
+// @Success 200 {array} models.Repay "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/repaid [get]
 func AllRepaid(c *fiber.Ctx) error {
 	repays := []models.Repay{}
 
@@ -155,6 +234,31 @@ func AllRepaid(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(repays)
 }
 
+// @Summary Retrieve total reward amount
+// @Tags contract
+// @Description Retrieves the total reward amount from the blockchain
+// @Success 200 {array} models.Reward "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/reward [get]
+func AllReward(c *fiber.Ctx) error {
+	rewards := []models.Reward{}
+
+	if err := database.DB.Find(&rewards).Error; err != nil {
+		fiberlog.Errorf("Failed to retrieve all rewards: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to retrieve all rewards.",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(rewards)
+}
+
+// @Summary Retrieve total staked amount
+// @Tags contract
+// @Description Retrieves the total staked amount from the blockchain
+// @Success 200 {array} models.Stake "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/staked [get]
 func AllStaked(c *fiber.Ctx) error {
 	stakes := []models.Stake{}
 
@@ -168,6 +272,12 @@ func AllStaked(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(stakes)
 }
 
+// @Summary Retrieve total withdrawn amount
+// @Tags contract
+// @Description Retrieves the total withdrawn amount from the blockchain
+// @Success 200 {array} models.Withdraw "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/contract/withdrawn [get]
 func AllWithdrawn(c *fiber.Ctx) error {
 	withdraws := []models.Withdraw{}
 

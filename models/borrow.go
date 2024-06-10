@@ -1,11 +1,15 @@
 package models
 
 import (
-	"gorm.io/gorm"
+	"time"
 )
 
 type Borrow struct {
-	gorm.Model
+	ID        uint `gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `json:"deleted_at,omitempty" gorm:"index"`
+
 	Address    string
 	Amount     string
 	Collateral string

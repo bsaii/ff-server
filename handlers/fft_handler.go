@@ -9,6 +9,23 @@ import (
 	fiberlog "github.com/gofiber/fiber/v2/log"
 )
 
+type AllowanceResponse struct {
+	Allowance string `json:"allowance"`
+}
+
+type BalanceResponse struct {
+	Balance string `json:"balance"`
+}
+
+// @Summary Retrieve remaining token allowance
+// @Tags token
+// @Description Returns the remaining number of tokens that the spender is allowed to spend on behalf of the owner
+// @Param owner query string true "owner address"
+// @Param spender query string true "spender address"
+// @Success 200 {object} AllowanceResponse "Successful retrieval"
+// @Failure 404 {object} ErrorResponse "Allowance not found"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/token/allowance [get]
 func Allowance(c *fiber.Ctx) error {
 	q := c.Queries()
 	owner := q["owner"]
@@ -32,11 +49,19 @@ func Allowance(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"allowance": amt.String(),
+	return c.Status(fiber.StatusOK).JSON(AllowanceResponse{
+		Allowance: amt.String(),
 	})
 }
 
+// @Summary Retrieve account balance
+// @Tags token
+// @Description Returns the value of tokens owned by the specified account
+// @Param account path string true "Account address"
+// @Success 200 {object} BalanceResponse "Successful retrieval"
+// @Failure 404 {object} ErrorResponse "Account not found"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/token/balance/{account} [get]
 func BalanceOf(c *fiber.Ctx) error {
 	account := c.Params("account")
 
@@ -57,11 +82,17 @@ func BalanceOf(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"balance": amt.String(),
+	return c.Status(fiber.StatusOK).JSON(BalanceResponse{
+		Balance: amt.String(),
 	})
 }
 
+// @Summary Retrieve all approvals
+// @Tags token
+// @Description Returns all the approvals that have happened on the blockchain and captured by the server
+// @Success 200 {array} models.Approval "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/token/approvals [get]
 func Approvals(c *fiber.Ctx) error {
 	approvals := []models.Approval{}
 
@@ -75,6 +106,12 @@ func Approvals(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(approvals)
 }
 
+// @Summary Retrieve all transfers
+// @Tags token
+// @Description Returns all the transfers that have happened on the blockchain and captured by the server
+// @Success 200 {array} models.Transfer "Successful retrieval"
+// @Failure 500 {object} ErrorResponse "Internal server error"
+// @Router /api/token/transfers [get]
 func Transfers(c *fiber.Ctx) error {
 	transfers := []models.Transfer{}
 

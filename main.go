@@ -18,16 +18,16 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-// @title Finance Forge Server
-// @version 1.0
-// @description This is a sample swagger for Fiber
-// @termsOfService http://swagger.io/terms/
-// @contact.name API Support
-// @contact.email fiber@swagger.io
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host localhost:8000
-// @BasePath /
+// @title			Finance Forge Server
+// @version		1.0
+// @description	This is a sample swagger for Fiber
+// @termsOfService	http://swagger.io/terms/
+// @contact.name	API Support
+// @contact.email	fiber@swagger.io
+// @license.name	Apache 2.0
+// @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+// @host			localhost:8000
+// @BasePath		/
 func main() {
 	cfg := config.LoadConfig()
 
@@ -82,6 +82,7 @@ func main() {
 	contract.Get("/borrowed", handlers.AllBorrowed)
 	contract.Get("/lent", handlers.AllLent)
 	contract.Get("/repaid", handlers.AllRepaid)
+	contract.Get("/reward", handlers.AllReward)
 	contract.Get("/staked", handlers.AllStaked)
 	contract.Get("/withdrawn", handlers.AllWithdrawn)
 
