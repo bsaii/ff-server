@@ -1,0 +1,486 @@
+basePath: /
+definitions:
+  handlers.AllowanceResponse:
+    properties:
+      allowance:
+        type: string
+    type: object
+  handlers.BalanceResponse:
+    properties:
+      balance:
+        type: string
+    type: object
+  handlers.BorrowedAmountResponse:
+    properties:
+      borrowed:
+        type: string
+    type: object
+  handlers.EarnedResponse:
+    properties:
+      earned:
+        type: string
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  handlers.RateResponse:
+    properties:
+      rate:
+        type: string
+    type: object
+  handlers.UserResponse:
+    properties:
+      borrowedBalance:
+        type: string
+      collateralBalance:
+        type: string
+      lastUpdated:
+        type: string
+      lendingBalance:
+        type: string
+      rewards:
+        type: string
+      stakingBalance:
+        type: string
+    type: object
+  models.Approval:
+    properties:
+      createdAt:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      owner:
+        type: string
+      spender:
+        type: string
+      updatedAt:
+        type: string
+      value:
+        type: string
+    type: object
+  models.Borrow:
+    properties:
+      address:
+        type: string
+      amount:
+        type: string
+      collateral:
+        type: string
+      createdAt:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.Lent:
+    properties:
+      address:
+        type: string
+      amount:
+        type: string
+      createdAt:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.Repay:
+    properties:
+      address:
+        type: string
+      amount:
+        type: string
+      createdAt:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.Reward:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      reward:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.Stake:
+    properties:
+      address:
+        type: string
+      amount:
+        type: string
+      createdAt:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.Transfer:
+    properties:
+      createdAt:
+        type: string
+      deleted_at:
+        type: string
+      from:
+        type: string
+      id:
+        type: integer
+      to:
+        type: string
+      updatedAt:
+        type: string
+      value:
+        type: string
+    type: object
+  models.Withdraw:
+    properties:
+      address:
+        type: string
+      amount:
+        type: string
+      createdAt:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Finance Forge Server
+  version: "1.0"
+paths:
+  /api/contract/borrowed:
+    get:
+      description: Retrieves the total borrowed amount from the blockchain
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            items:
+              $ref: '#/definitions/models.Borrow'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve total borrowed amount
+      tags:
+      - contract
+  /api/contract/borrowed/{account}:
+    get:
+      description: Retrieves the amount borrowed by an account from the blockchain
+      parameters:
+      - description: Account address
+        in: path
+        name: account
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            $ref: '#/definitions/handlers.BorrowedAmountResponse'
+        "404":
+          description: Account not found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve borrowed amount
+      tags:
+      - contract
+  /api/contract/earned/{account}:
+    get:
+      description: Retrieves the amount earned by an account from the blockchain
+      parameters:
+      - description: Account address
+        in: path
+        name: account
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            $ref: '#/definitions/handlers.EarnedResponse'
+        "404":
+          description: Account not found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve earned amount
+      tags:
+      - contract
+  /api/contract/lent:
+    get:
+      description: Retrieves the total lent amount from the blockchain
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            items:
+              $ref: '#/definitions/models.Lent'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve total lent amount
+      tags:
+      - contract
+  /api/contract/rate/interest:
+    get:
+      description: Retrieves the general interest rate from the blockchain
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            $ref: '#/definitions/handlers.RateResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve interest rate
+      tags:
+      - contract
+  /api/contract/rate/reward:
+    get:
+      description: Retrieves the general reward rate from the blockchain
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            $ref: '#/definitions/handlers.RateResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve reward rate
+      tags:
+      - contract
+  /api/contract/repaid:
+    get:
+      description: Retrieves the total repaid amount from the blockchain
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            items:
+              $ref: '#/definitions/models.Repay'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve total repaid amount
+      tags:
+      - contract
+  /api/contract/reward:
+    get:
+      description: Retrieves the total reward amount from the blockchain
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            items:
+              $ref: '#/definitions/models.Reward'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve total reward amount
+      tags:
+      - contract
+  /api/contract/staked:
+    get:
+      description: Retrieves the total staked amount from the blockchain
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            items:
+              $ref: '#/definitions/models.Stake'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve total staked amount
+      tags:
+      - contract
+  /api/contract/user/{account}:
+    get:
+      description: Retrieves user information from the blockchain using the address
+      parameters:
+      - description: User address
+        in: path
+        name: account
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            $ref: '#/definitions/handlers.UserResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve user information
+      tags:
+      - contract
+  /api/contract/withdrawn:
+    get:
+      description: Retrieves the total withdrawn amount from the blockchain
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            items:
+              $ref: '#/definitions/models.Withdraw'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve total withdrawn amount
+      tags:
+      - contract
+  /api/token/allowance:
+    get:
+      description: Returns the remaining number of tokens that the spender is allowed
+        to spend on behalf of the owner
+      parameters:
+      - description: owner address
+        in: query
+        name: owner
+        required: true
+        type: string
+      - description: spender address
+        in: query
+        name: spender
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            $ref: '#/definitions/handlers.AllowanceResponse'
+        "404":
+          description: Allowance not found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve remaining token allowance
+      tags:
+      - token
+  /api/token/approvals:
+    get:
+      description: Returns all the approvals that have happened on the blockchain
+        and captured by the server
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            items:
+              $ref: '#/definitions/models.Approval'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve all approvals
+      tags:
+      - token
+  /api/token/balance/{account}:
+    get:
+      description: Returns the value of tokens owned by the specified account
+      parameters:
+      - description: Account address
+        in: path
+        name: account
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            $ref: '#/definitions/handlers.BalanceResponse'
+        "404":
+          description: Account not found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve account balance
+      tags:
+      - token
+  /api/token/transfers:
+    get:
+      description: Returns all the transfers that have happened on the blockchain
+        and captured by the server
+      responses:
+        "200":
+          description: Successful retrieval
+          schema:
+            items:
+              $ref: '#/definitions/models.Transfer'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Retrieve all transfers
+      tags:
+      - token
+swagger: "2.0"
